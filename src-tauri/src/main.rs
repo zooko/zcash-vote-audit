@@ -196,9 +196,18 @@ async fn audit(url: &str, seed_phrase: &str) -> Result<()> {
 
     // Print totals
     println!();
+    let grand_total: u64 = counts.iter().map(|c| c.2).sum();
     println!("  TOTALS:");
     for (c, cc) in counts.iter().zip(election.candidates.iter()) {
-        println!("    {:>20}: {} ZEC  ({})", cc.choice, fmt(c.2), fmt2(c.2));
+        let pct = if grand_total > 0 {
+            (c.2 as f64 / grand_total as f64) * 100.0
+        } else {
+            0.0
+        };
+        println!(
+            "    {:>20}: {} ZEC  {:>5.1}%  ({:>21})",
+            cc.choice, fmt(c.2), pct, fmt2(c.2)
+        );
     }
 
     Ok(())
